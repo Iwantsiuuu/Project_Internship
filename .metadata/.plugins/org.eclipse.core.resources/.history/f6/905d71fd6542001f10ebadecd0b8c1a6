@@ -1,0 +1,23 @@
+#pragma once
+
+#ifndef SETTING_ALARM_H_
+#define SETTING_ALARM_H_
+
+#include "task_button.h"
+#include "task_interface.h"
+#include "rtc_sc.h"
+
+void alarm_disp();
+
+static void init_alarm_disp();
+static void deinit_alarm_disp();
+static void alarm_draw();
+
+static void increment_var_cb();
+static void decrement_var_cb();
+static void switch_var_cb();
+static void confirm_cb();
+static void back_alarm_cb();
+static void speech_alarm_cmd(uint8_t *cmd);
+
+#endif

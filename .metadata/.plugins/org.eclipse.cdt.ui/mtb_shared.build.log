@@ -1,0 +1,6 @@
+16:29:00 **** Incremental Build of configuration Debug for project mtb_shared ****
+echo Skipping mtb_shared; nothing to build for: all 
+Skipping mtb_shared; nothing to build for: all
+
+16:29:02 Build Finished. 0 errors, 0 warnings. (took 1s.946ms)
+
