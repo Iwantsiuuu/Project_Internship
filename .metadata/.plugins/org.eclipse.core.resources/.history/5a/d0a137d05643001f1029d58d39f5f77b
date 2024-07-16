@@ -46,7 +46,7 @@ void notify_task(){
 #ifdef UNUSE_I2S
 				printf("%s\r\n",environtment_buf);
 #endif
-				wiced_bt_gatt_server_send_notification( connection_id, HDLC_PSOC_ENVIRONMENT_VALUE, strlen(environtment_buf), (uint8_t *)environtment_buf, NULL);
+				wiced_bt_gatt_server_send_notification( connection_id, HDLC_PSOC_STRING_VALUE, strlen(environtment_buf), (uint8_t *)environtment_buf, NULL);
 				memset(buffer, '\0', sizeof(buffer));
 			}
 
@@ -60,7 +60,7 @@ void notify_task(){
 				printf("%s\r\n",air_quality_buf);
 #endif
 
-				wiced_bt_gatt_server_send_notification( connection_id, HDLC_PSOC_AIR_QUALITY_VALUE, strlen(air_quality_buf), (uint8_t *)air_quality_buf, NULL);
+				wiced_bt_gatt_server_send_notification( connection_id, HDLC_PSOC_STRING_VALUE, strlen(air_quality_buf), (uint8_t *)air_quality_buf, NULL);
 				memset(buffer, '\0', sizeof(buffer));
 			}
 		}
