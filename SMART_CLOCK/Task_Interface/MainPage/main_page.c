@@ -43,8 +43,6 @@ uint8_t koordinatX_oled = 0, koordinatY_oled = 0;
 void main_page(){
 	init_main_page();
 
-	MODE_DISPLAY = BLUETOOTH_MODE;
-
 	while (1){
 		speech_main_cmd(&speech_command);
 

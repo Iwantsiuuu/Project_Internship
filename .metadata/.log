@@ -5728,3 +5728,33 @@ org.eclipse.core.runtime.CoreException: Target not available.
 
 !ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 15:22:59.081
 !MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/gcc/bin/arm-none-eabi-gdb.exe --interpreter=mi2 --nx
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 15:36:18.356
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/openocd.exe -c gdb_port 3333 -c telnet_port 4444 -c tcl_port 6666 -s C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/../scripts -s bsps/TARGET_APP_CY8CPROTO-063-BLE/config/GeneratedSource -c source [find interface/kitprog3.cfg] -c transport select swd -c puts stderr {Started by GNU MCU Eclipse} -c source [find target/psoc6.cfg] -c psoc6 sflash_restrictions 1 -c init; reset init -c echo "Started by GNU MCU Eclipse"
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 15:36:18.849
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/gcc/bin/arm-none-eabi-gdb.exe --interpreter=mi2 --nx
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:19:54.701
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/openocd.exe -c gdb_port 3333 -c telnet_port 4444 -c tcl_port 6666 -s C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/../scripts -s bsps/TARGET_APP_CY8CPROTO-063-BLE/config/GeneratedSource -c source [find interface/kitprog3.cfg] -c transport select swd -c puts stderr {Started by GNU MCU Eclipse} -c source [find target/psoc6.cfg] -c psoc6 sflash_restrictions 1 -c init; reset init -c echo "Started by GNU MCU Eclipse"
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:19:55.292
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/gcc/bin/arm-none-eabi-gdb.exe --interpreter=mi2 --nx
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:23:59.200
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/openocd.exe -c gdb_port 3333 -c telnet_port 4444 -c tcl_port 6666 -s C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/../scripts -s bsps/TARGET_APP_CY8CPROTO-063-BLE/config/GeneratedSource -c source [find interface/kitprog3.cfg] -c transport select swd -c puts stderr {Started by GNU MCU Eclipse} -c source [find target/psoc6.cfg] -c psoc6 sflash_restrictions 1 -c init; reset init -c echo "Started by GNU MCU Eclipse"
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:23:59.644
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/gcc/bin/arm-none-eabi-gdb.exe --interpreter=mi2 --nx
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:26:07.744
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/openocd.exe -c gdb_port 3333 -c telnet_port 4444 -c tcl_port 6666 -s C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/../scripts -s bsps/TARGET_APP_CY8CPROTO-063-BLE/config/GeneratedSource -c source [find interface/kitprog3.cfg] -c transport select swd -c puts stderr {Started by GNU MCU Eclipse} -c source [find target/psoc6.cfg] -c psoc6 sflash_restrictions 1 -c init; reset init -c echo "Started by GNU MCU Eclipse"
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:26:08.372
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/gcc/bin/arm-none-eabi-gdb.exe --interpreter=mi2 --nx
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:28:14.090
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/openocd.exe -c gdb_port 3333 -c telnet_port 4444 -c tcl_port 6666 -s C:/Users/bahariridwan/ModusToolbox/tools_3.1/openocd/bin/../scripts -s bsps/TARGET_APP_CY8CPROTO-063-BLE/config/GeneratedSource -c source [find interface/kitprog3.cfg] -c transport select swd -c puts stderr {Started by GNU MCU Eclipse} -c source [find target/psoc6.cfg] -c psoc6 sflash_restrictions 1 -c init; reset init -c echo "Started by GNU MCU Eclipse"
+
+!ENTRY ilg.gnumcueclipse.debug.gdbjtag.openocd 4 1 2024-07-16 16:28:14.568
+!MESSAGE C:/Users/bahariridwan/ModusToolbox/tools_3.1/gcc/bin/arm-none-eabi-gdb.exe --interpreter=mi2 --nx
