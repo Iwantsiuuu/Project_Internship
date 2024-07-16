@@ -179,25 +179,27 @@ static void speech_menu_cmd(uint8_t *cmd){
 	}
 }
 
-static void time_out(){
-
-	if(timeout_flag)
-	{
-		timeout_flag = false;
-		minute_timeout = (uint32_t)RTC_TIME.tm_min;
-		second_timeout = (uint32_t)RTC_TIME.tm_sec;
-	}
-
-	if((uint32_t)RTC_TIME.tm_min < minute_timeout)
-		minute_timeout = 0;
-
-	if((uint32_t)RTC_TIME.tm_sec < second_timeout)
-		second_timeout = 0;
-
-	if (((uint32_t)RTC_TIME.tm_min - minute_timeout >= (TIMEOUT+1)) && ((uint32_t)RTC_TIME.tm_sec - second_timeout == (TIMEOUT-1))){
-		minute_timeout = (uint32_t)RTC_TIME.tm_min;
-		second_timeout = (uint32_t)RTC_TIME.tm_sec;
-		menu_cursor = index_back;
-		printf("Switch to sleep mode/deepsleep mode\r\n");
-	}
-}
+//static void time_out(){
+//
+//	if(timeout_flag)
+//	{
+//		timeout_flag = false;
+//		minute_timeout = (uint32_t)RTC_TIME.tm_min;
+//		second_timeout = (uint32_t)RTC_TIME.tm_sec;
+//	}
+//
+//	if((uint32_t)RTC_TIME.tm_min < minute_timeout)
+//		minute_timeout = 0;
+//
+//	if((uint32_t)RTC_TIME.tm_sec < second_timeout)
+//		second_timeout = 0;
+//
+//	if (((uint32_t)RTC_TIME.tm_min - minute_timeout >= (TIMEOUT+1)) && ((uint32_t)RTC_TIME.tm_sec - second_timeout == (TIMEOUT-1))){
+//		minute_timeout = (uint32_t)RTC_TIME.tm_min;
+//		second_timeout = (uint32_t)RTC_TIME.tm_sec;
+//		menu_cursor = index_back;
+//#ifdef UNUSE_I2S
+//		printf("Switch to sleep mode/deepsleep mode\r\n");
+//#endif
+//	}
+//}

@@ -17,7 +17,6 @@ void notify_task(){
 			if (CY_RSLT_SUCCESS == rslt)
 			{
 				strftime(buffer, sizeof(buffer), "%c", &date_time);
-				printf("\r%s\n", buffer);
 			}
 		}
 

@@ -25,20 +25,33 @@ void sensor_App(void *arg)
 	uint32_t time_update = 0;
 	while(1)
 	{
+#ifdef USE_DUMMY_DATA
+		dps_sensor.pressure = 1014.25;
+		dps_sensor.temperature = 28;
 
+		bmp280_sensor.pressure = 1014.25;
+		bmp280_sensor.temperature = 28;
+
+		bme680_sensor.pressure = 1014.25;
+		bme680_sensor.temperature = 28;
+		bme680_sensor.humidity = 60;
+		bme680_sensor.gas = 50;
+#endif
+
+#ifdef USE_SENSOR
 		if( xTaskGetTickCount() - time_update >= 1000)
 		{
 			if (semphr_i2c_dev != NULL){
 				if(xSemaphoreTake(semphr_i2c_dev, ( TickType_t ) 100)){
 
-#ifdef USE_DPS3xx
+#ifdef USE_DPS310
 					xensiv_dps3xx_read(&pressure_sensor, &dps_sensor.pressure, &dps_sensor.temperature);
-//					printf("press: %0.2f \t tempt: %0.0f C\r\n",dps_sensor.pressure, dps_sensor.temperature);
+					//					printf("press: %0.2f \t tempt: %0.0f C\r\n",dps_sensor.pressure, dps_sensor.temperature);
 #endif
 
-#ifdef USE_BMxx80
+#ifdef USE_BMP280
 					BMP280_readValue(&bmp280_sensor.temperature, &bmp280_sensor.pressure, 100);
-//					printf("press: %0.2f \t tempt: %0.0f C\r\n",dps_sensor.pressure, dps_sensor.temperature);
+					//					printf("press: %0.2f \t tempt: %0.0f C\r\n",dps_sensor.pressure, dps_sensor.temperature);
 #endif
 					xSemaphoreGive(semphr_i2c_dev);
 					time_update = xTaskGetTickCount();
@@ -46,19 +59,25 @@ void sensor_App(void *arg)
 			}
 
 		}
+#endif
 		vTaskDelay(100);
 	};
 }
 
 cy_rslt_t sensorInit(){
-
-    cy_rslt_t result;
-#ifdef USE_BMxx80
-    result = bmp280.init(&i2c, BMP280_ADDR);
-#endif
-
-#ifdef USE_DPS3xx
-    result = xensiv_dps3xx_mtb_init_i2c(&pressure_sensor, &i2c, 0x77);
-#endif
+	cy_rslt_t result;
+#ifdef USE_BMP280
+	result = bmp280.init(&i2c, BMP280_ADDR);
 	return result;
+#endif
+
+#ifdef USE_DPS310
+	result = xensiv_dps3xx_mtb_init_i2c(&pressure_sensor, &i2c, 0x77);
+	return result;
+#endif
+
+#ifdef USE_DUMMY_DATA
+	result = CY_RSLT_SUCCESS;
+#endif
+
 }

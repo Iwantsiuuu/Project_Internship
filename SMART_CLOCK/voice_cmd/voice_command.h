@@ -46,4 +46,8 @@ void voice_command_task(void);
 
 extern uint8_t speech_command;
 
+#ifdef USE_I2S
+extern cyhal_i2s_t i2s;
+#endif
+
 #endif

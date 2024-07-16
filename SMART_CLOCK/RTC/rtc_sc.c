@@ -26,12 +26,12 @@ RTC_Data_Setup_t RTC_Setup;
 
 cyhal_alarm_active_t alarm_active =
 {
-    .en_sec   = 1,
-    .en_min   = 1,
-    .en_hour  = 1,
-    .en_day   =  1,
-    .en_date  = 1,
-    .en_month = 1,
+		.en_sec   = 1,
+		.en_min   = 1,
+		.en_hour  = 1,
+		.en_day   =  1,
+		.en_date  = 1,
+		.en_month = 1,
 };
 
 void handle_error(void)
@@ -77,7 +77,9 @@ void set_new_time()
 		rslt = cyhal_rtc_write(&rtc_obj, &new_time);
 		if (CY_RSLT_SUCCESS == rslt)
 		{
+#ifdef UNUSE_I2S
 			printf("\rRTC time updated\r\n\n");
+#endif
 		}
 		else
 		{
@@ -102,10 +104,12 @@ void set_alarm()
 		new_time.tm_year = RTC_Setup.Year - TM_YEAR_BASE;
 		new_time.tm_wday = get_day_of_week(RTC_Setup.mday, RTC_Setup.month, RTC_Setup.Year);
 
-        rslt = cyhal_rtc_set_alarm(&rtc_obj, &new_time, alarm_active);
+		rslt = cyhal_rtc_set_alarm(&rtc_obj, &new_time, alarm_active);
 		if (CY_RSLT_SUCCESS == rslt)
 		{
+#ifdef UNUSE_I2S
 			printf("\rRTC time updated\r\n\n");
+#endif
 		}
 		else
 		{
@@ -116,12 +120,14 @@ void set_alarm()
 
 void cyhal_rtc_alarm_interrupt_handler(void* arg, cyhal_rtc_event_t event)
 {
-    (void)arg;
-    if (event == CYHAL_RTC_ALARM)
-    {
-        // ALARM HAS FIRED
-    	printf("Play a song\r\n");
-    }
+	(void)arg;
+	if (event == CYHAL_RTC_ALARM)
+	{
+		// ALARM HAS FIRED
+#ifdef UNUSE_I2S
+		printf("Play a song\r\n");
+#endif
+	}
 }
 /*******************************************************************************
  * Function Name: get_day_of_week

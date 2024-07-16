@@ -42,7 +42,10 @@ wiced_bt_dev_status_t app_bt_management_callback             (wiced_bt_managemen
 extern cyhal_pwm_t PWM_obj;
 extern TimerHandle_t timer_led_blink;
 
+extern uint8_t event_data_ble;
+
 extern uint16_t connection_id;
+extern uint16_t reason_dic;
 
 extern bool set_rtc;
 extern bool flag_bt_actived;

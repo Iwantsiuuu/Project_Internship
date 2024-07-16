@@ -12,6 +12,7 @@
 #define NUM_HOUR					(23)
 #define NUM_MINUTE					(59)
 #define NUM_SECON					(59)
+#define ENABLE 						(1)
 
 /* Prototype function */
 static void init_rtc_disp();
@@ -31,6 +32,7 @@ static uint8_t idx_back = RTC_PAGE+1;
 static uint8_t current_var = 0;
 static uint8_t num_var = 6;
 static bool confirm_flag = false;
+static bool RTC_ENABLE = false;
 
 enum var_rtc{
 	Hour,
@@ -97,7 +99,6 @@ static void rtc_draw(){
 void rtc_disp(){
 	init_rtc_disp();
 	while (1){
-
 		speech_time_date_cmd(&speech_command);
 		if (THIS_PAGE == RTC_PAGE)
 			rtc_draw();
@@ -113,11 +114,19 @@ void rtc_disp(){
 void rtc_set_first(){
 	init_rtc_disp();
 	while(1){
+
+		if ((RTC_ENABLE = cyhal_rtc_is_enabled(&rtc_obj)) == ENABLE)
+			THIS_PAGE = idx_back; //index_back
+
+		if(reason_dic == GATT_CONN_TERMINATE_PEER_USER || reason_dic == GATT_CONN_TIMEOUT)
+			wiced_bt_start_advertisements( BTM_BLE_ADVERT_UNDIRECTED_HIGH, 0, NULL );
+
 		if (THIS_PAGE == RTC_PAGE)
 			rtc_draw();
 		else{
 			deinit_rtc_disp();
-			displayOled();
+			//			displayOled();
+			break;
 		}
 		vTaskDelay(20);
 	}

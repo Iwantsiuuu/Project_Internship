@@ -34,17 +34,18 @@ char buf_temp [20];
 
 static uint8_t THIS_PAGE = 0;
 static uint8_t MODE_DISPLAY = 0;
-static bool timeout_flag = false;
-static uint32_t minute_timeout = 0;
-static uint32_t second_timeout = 0;
+//static bool timeout_flag = false;
+//static uint32_t minute_timeout = 0;
+//static uint32_t second_timeout = 0;
 
 uint8_t koordinatX_oled = 0, koordinatY_oled = 0;
 
 void main_page(){
 	init_main_page();
 
+	MODE_DISPLAY = BLUETOOTH_MODE;
+
 	while (1){
-//		time_out();
 		speech_main_cmd(&speech_command);
 
 		if (THIS_PAGE == MAIN_PAGE_ID)
@@ -84,7 +85,21 @@ static void default_mode_draw(){
 	strftime(buf_time, sizeof(buf_time), "%X %p", &RTC_TIME);
 	strftime(buf_date, STRING_BUFFER_SIZE, "%b %d, %Y", &RTC_TIME);
 
+#ifdef USE_DUMMY_DATA
 	sprintf(buf_temp,"%0.0f C\xB0\r\n", dps_sensor.temperature);
+#endif
+
+#ifdef USE_BME680
+	sprintf(buf_temp,"%0.0f C\xB0\r\n", bme680_sensor.temperature);
+#endif
+
+#ifdef USE_BMP280
+	sprintf(buf_temp,"%0.0f C\xB0\r\n", bmp280_sensor.temperature);
+#endif
+
+#ifdef USE_DPS310
+	sprintf(buf_temp,"%0.0f C\xB0\r\n", dps_sensor.temperature);
+#endif
 
 	u8g2_DrawStr(&u8g2_obj, (koordinatX_oled+110), (koordinatY_oled+8), "80%");
 	u8g2_DrawStr(&u8g2_obj, (koordinatX_oled+35), (koordinatY_oled+25), buf_time);
@@ -113,7 +128,7 @@ static void init_main_page()
 	THIS_PAGE = MAIN_PAGE_ID;
 	MODE_DISPLAY = 0;
 	speech_command = 0;
-	timeout_flag = true;
+//	timeout_flag = true;
 }
 
 static void deinit_main_page(){
@@ -125,12 +140,12 @@ static void deinit_main_page(){
 }
 
 static void enter_menu_cb(){
-	timeout_flag = true;
+//	timeout_flag = true;
 	THIS_PAGE = MENU_PAGE_ID;
 }
 
 static void main_page_mode(){
-	timeout_flag = true;
+//	timeout_flag = true;
 	MODE_DISPLAY++;
 	if (MODE_DISPLAY > BLUETOOTH_MODE)
 		MODE_DISPLAY = DEFAULT_MODE;
@@ -148,46 +163,46 @@ static void speech_main_cmd(uint8_t *cmd){
 	switch(*cmd)
 	{
 	case DEFAULT_MODE_CMD:
-		timeout_flag = true;
+//		timeout_flag = true;
 		MODE_DISPLAY = DEFAULT_MODE;
 		break;
 
 	case BLUETOOTH_MODE_CMD:
-		timeout_flag = true;
+//		timeout_flag = true;
 		MODE_DISPLAY = BLUETOOTH_MODE;
 		break;
 
 	case SHOW_MENU_CMD:
-		timeout_flag = true;
+//		timeout_flag = true;
 		THIS_PAGE = MENU_PAGE_ID;
 		break;
 	}
 }
 
-static void time_out(){
-
-	if(timeout_flag)
-	{
-		timeout_flag = false;
-		minute_timeout = (uint32_t)RTC_TIME.tm_min;
-		second_timeout = (uint32_t)RTC_TIME.tm_sec;
-	}
-
-	if((uint32_t)RTC_TIME.tm_min < minute_timeout)
-		minute_timeout = 0;
-
-	if((uint32_t)RTC_TIME.tm_sec < second_timeout)
-		second_timeout = 0;
-
-	if (((uint32_t)RTC_TIME.tm_min - minute_timeout >= (TIMEOUT+1)) && ((uint32_t)RTC_TIME.tm_sec - second_timeout == (TIMEOUT-1)))
-	{
-
-		minute_timeout = (uint32_t)RTC_TIME.tm_min;
-		second_timeout = (uint32_t)RTC_TIME.tm_sec;
-
-		/*Switch to sleep mode/deepsleep mode*/
-        cyhal_syspm_sleep();
-        vTaskDelay(100);
-
-	}
-}
+//static void time_out(){
+//
+//	if(timeout_flag)
+//	{
+//		timeout_flag = false;
+//		minute_timeout = (uint32_t)RTC_TIME.tm_min;
+//		second_timeout = (uint32_t)RTC_TIME.tm_sec;
+//	}
+//
+//	if((uint32_t)RTC_TIME.tm_min < minute_timeout)
+//		minute_timeout = 0;
+//
+//	if((uint32_t)RTC_TIME.tm_sec < second_timeout)
+//		second_timeout = 0;
+//
+//	if (((uint32_t)RTC_TIME.tm_min - minute_timeout >= (TIMEOUT+1)) && ((uint32_t)RTC_TIME.tm_sec - second_timeout == (TIMEOUT-1)))
+//	{
+//
+//		minute_timeout = (uint32_t)RTC_TIME.tm_min;
+//		second_timeout = (uint32_t)RTC_TIME.tm_sec;
+//
+//		/*Switch to sleep mode/deepsleep mode*/
+//        cyhal_syspm_sleep();
+//        vTaskDelay(100);
+//
+//	}
+//}

@@ -27,6 +27,7 @@ bool systemReady = false;
 int main(void)
 {
 	cy_rslt_t result;
+	wiced_result_t wicedRslt;
 
 	/*----> Set year from 2000th <----*/
 	RTC_Setup.Year = 2000;
@@ -62,8 +63,10 @@ int main(void)
 	/* Enable global interrupts */
 	__enable_irq();
 
+#ifdef UNUSE_I2S
 	/*----> Initialization retarget_io when using printf for display the value or debugging using serial terminal <----*/
 	cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX, CY_RETARGET_IO_BAUDRATE);
+#endif
 
 	/*----> Initialization and set pin 7_1 ON for enable the Low-Dropout regulator(LDO) on expansion board development smart clock (interface board) <-------*/
 	result = cyhal_gpio_init(LDO_ENABLE, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_OPENDRAINDRIVESHIGH, CYBSP_LED_STATE_ON);
@@ -88,9 +91,11 @@ int main(void)
 	// Enable the alarm event to trigger an interrupt
 	cyhal_rtc_enable_event(&rtc_obj, CYHAL_RTC_ALARM, RTC_INTERRUPT_PRIORITY, true);
 
+#ifdef UNUSE_I2S
 	printf("**********Application Start*****************\n\r");
+#endif
 
-	/*----> Initialization CYBSP_USER_LED1 as PWM for Bluetooth advertisement indicator <----*/
+	/*----> Initialization CYBSP_USER_LED1 as PWM for BlueTooth advertisement indicator <----*/
 	result = cyhal_pwm_init(&PWM_obj, CYBSP_USER_LED1, NULL);
 	cyhal_pwm_start(&PWM_obj);
 
@@ -98,12 +103,19 @@ int main(void)
 	cybt_platform_config_init(&cybsp_bt_platform_cfg);
 
 	/* Initialize stack and register the callback function */
-	wiced_bt_stack_init (app_bt_management_callback, &wiced_bt_cfg_settings);
+	wicedRslt = wiced_bt_stack_init (app_bt_management_callback, &wiced_bt_cfg_settings);
 
+#ifdef USE_SENSOR
 	/*----> Initialization sensor used for environment and air quality monitoring <----*/
 	if(sensorInit() == CY_RSLT_SUCCESS)
 		/* After all initialization success, set systemReady to true for run all system*/
 		systemReady = true;
+#endif
+
+#ifdef USE_DUMMY_DATA
+	if(wicedRslt == CY_RSLT_SUCCESS)
+		systemReady = true;
+#endif
 
 	/*----> Using semaphore for manage transaction on I2C <----*/
 	semphr_i2c_dev = xSemaphoreCreateMutex();

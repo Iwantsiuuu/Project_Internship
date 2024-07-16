@@ -4,7 +4,6 @@
 
 #define ENVI_PAGE 1
 
-
 /* Prototype function */
 static void prev_Cb();
 static void environment_draw();
@@ -12,7 +11,7 @@ static void environment_getVal();
 static void speech_environment_cmd(uint8_t *cmd);
 
 /* Global Variable */
-static char dps_buf_pressure[20],dps_buf_temperatur[20];
+static char data_buf_pressure[20], data_buf_temperatur[20], data_buf_humidity[20];
 
 static uint8_t THIS_PAGE = 0;
 static uint8_t idx_back = ENVI_PAGE+1;
@@ -37,15 +36,54 @@ void deinit_environment_disp(){
 }
 
 static void environment_getVal(){
-	sprintf(dps_buf_pressure  ,"Pres :%0.2f\t hPa",dps_sensor.pressure);
-	sprintf(dps_buf_temperatur,"Temp :%0.2f\t C\xB0",dps_sensor.temperature);
+#ifdef USE_DPS310
+	sprintf(data_buf_pressure  ,"Pres :%0.2f\t hPa",dps_sensor.pressure);
+	sprintf(data_buf_temperatur,"Temp :%0.2f\t C\xB0",dps_sensor.temperature);
+#endif
+
+#ifdef USE_BMP280
+	sprintf(data_buf_pressure  ,"Pres :%0.2f\t hPa",bmp280_sensor.pressure);
+	sprintf(data_buf_temperatur,"Temp :%0.2f\t C\xB0",bmp280_sensor.temperature);
+#endif
+
+#ifdef USE_BME680
+	sprintf(data_buf_pressure  ,"Pres :%0.2f\t hPa",bme680_sensor.pressure);
+	sprintf(data_buf_temperatur,"Temp :%0.2f\t C\xB0",bme680_sensor.temperature);
+	sprintf(data_buf_humidity,"Humy :%0.2f\t C\xB0",bme680_sensor.humidity);
+#endif
+
+#ifdef USE_DUMMY_DATA
+	sprintf(data_buf_pressure  ,"Pres :%0.2f\t hPa",bme680_sensor.pressure);
+	sprintf(data_buf_temperatur,"Temp :%0.2f\t C\xB0",bme680_sensor.temperature);
+	sprintf(data_buf_humidity,"Humy :%0.2f\t C\xB0",bme680_sensor.humidity);
+#endif
 }
 
 static void environment_draw(){
 	environment_getVal();
 	u8g2_DrawStr(&u8g2_obj, 0, 10, "Environment Data");
-	u8g2_DrawStr(&u8g2_obj, 0, 30, dps_buf_pressure);
-	u8g2_DrawStr(&u8g2_obj, 0, 40, dps_buf_temperatur);
+
+#ifdef USE_DUMMY_DATA
+	u8g2_DrawStr(&u8g2_obj, 0, 30, data_buf_pressure);
+	u8g2_DrawStr(&u8g2_obj, 0, 40, data_buf_temperatur);
+	u8g2_DrawStr(&u8g2_obj, 0, 50, data_buf_humidity);
+#endif
+
+#ifdef USE_DPS310
+	u8g2_DrawStr(&u8g2_obj, 0, 30, data_buf_pressure);
+	u8g2_DrawStr(&u8g2_obj, 0, 40, data_buf_temperatur);
+#endif
+
+#ifdef USE_BMP280
+	u8g2_DrawStr(&u8g2_obj, 0, 30, data_buf_pressure);
+	u8g2_DrawStr(&u8g2_obj, 0, 40, data_buf_temperatur);
+#endif
+
+#ifdef USE_BME680
+	u8g2_DrawStr(&u8g2_obj, 0, 30, data_buf_pressure);
+	u8g2_DrawStr(&u8g2_obj, 0, 40, data_buf_temperatur);
+	u8g2_DrawStr(&u8g2_obj, 0, 50, data_buf_humidity);
+#endif
 	send_buffer_u8g2();
 }
 

@@ -1,8 +1,9 @@
 #include "setup_i2c.h"
 
-//#define SDA_PIN 	(P10_1)
-//#define SCL_PIN	(P10_0)
-
+#ifdef USE_SMART_CLOCK_DEVELOPMENT_BOARD
+#define SDA_PIN (P10_1)
+#define SCL_PIN	(P10_0)
+#endif
 
 /*I2C object*/
 cyhal_i2c_t i2c;
@@ -17,23 +18,30 @@ const cyhal_i2c_cfg_t i2c_cfg =
 
 cy_rslt_t init_i2c(){
 
-    cy_rslt_t result;
+	cy_rslt_t result;
 
-    /*-------- I2C initialization when using the CY8CKIT-028-SENSE shield in the board support package ------------*/
+#ifdef USE_EXPANSION_BOARD
+	/*-------- I2C initialization when using the CY8CKIT-028-SENSE shield in the board support package ------------*/
 	result = cyhal_i2c_init(&i2c, CYBSP_I2C_SDA, CYBSP_I2C_SCL, NULL);
+#endif
+
+#ifdef USE_SMART_CLOCK_DEVELOPMENT_BOARD
+	/*-------- I2C initialization when using the smart clock board development ------------*/
+	result = cyhal_i2c_init(&i2c, SDA_PIN, SCL_PIN, NULL);
+#endif
 
 	/*I2C pin for development board Smart Clock (CYBLE-416045-02)*/
-//	result = cyhal_i2c_init(&i2c, SDA_PIN, SCL_PIN, NULL);
-    if (result != CY_RSLT_SUCCESS)
-    {
-        CY_ASSERT(0);
-    }
+	//	result = cyhal_i2c_init(&i2c, SDA_PIN, SCL_PIN, NULL);
+	if (result != CY_RSLT_SUCCESS)
+	{
+		CY_ASSERT(0);
+	}
 
 	result = cyhal_i2c_configure(&i2c, &i2c_cfg);
-    if (result != CY_RSLT_SUCCESS)
-    {
-        CY_ASSERT(0);
-    }
+	if (result != CY_RSLT_SUCCESS)
+	{
+		CY_ASSERT(0);
+	}
 
-    return result;
+	return result;
 }

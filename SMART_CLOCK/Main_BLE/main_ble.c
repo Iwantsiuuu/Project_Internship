@@ -40,14 +40,23 @@ TimerHandle_t timer_led_blink;
 bool set_rtc = false;
 
 uint8_t led_blink_count;
+uint8_t event_data_ble;
+
 uint16_t connection_id = 0;
+uint16_t reason_dic = 0;
 
 bool flag_bt_actived = false;
+
+const char* reason_disconnect = "";
 
 void app_bt_timeout_led_blink(TimerHandle_t timer_handle)
 {
 	static wiced_bool_t led_on = WICED_TRUE;
+
+#ifdef UNUSE_I2S
 	printf("Num at void timout : %d\r\n", led_blink_count);
+#endif
+
 	if (led_on)
 	{
 		cyhal_gpio_write(CYBSP_USER_LED, CYBSP_LED_STATE_OFF);
@@ -69,7 +78,9 @@ void app_bt_led_blink(uint16_t num_of_blinks)
 {
 	if (num_of_blinks)
 	{
+#ifdef UNUSE_I2S
 		printf("Num at void blink : %d\r\n", num_of_blinks);
+#endif
 		led_blink_count = num_of_blinks;
 		cyhal_gpio_write(CYBSP_USER_LED , CYBSP_LED_STATE_ON);
 		xTimerStart(timer_led_blink, 0);
@@ -86,22 +97,25 @@ wiced_result_t app_bt_management_callback( wiced_bt_management_evt_t event, wice
 	/* Start in error state so that any unimplemented states will return error */
 	wiced_result_t result = WICED_BT_ERROR;
 	wiced_bt_device_address_t bda = {0};
-
+#ifdef UNUSE_I2S
 	printf("Bluetooth Management Event: 0x%x %s\n\r", event, get_bt_event_name(event));
-
+#endif
 	switch( event )
 	{
 	case BTM_ENABLED_EVT:								// Bluetooth Controller and Host Stack Enabled
-		//		if(flag_bt_actived == true){
 		if( WICED_BT_SUCCESS == p_event_data->enabled.status )
 		{
+#ifdef UNUSE_I2S
 			printf( "Bluetooth Enabled\n\r" );
-
+#endif
 			/* Set the local BDA from the value in the configurator and print it */
 			wiced_bt_set_local_bdaddr((uint8_t *)cy_bt_device_address, BLE_ADDR_PUBLIC);
 			wiced_bt_dev_read_local_addr( bda );
+
+#ifdef UNUSE_I2S
 			printf( "Local Bluetooth Device Address: ");
 			print_bd_address(bda);
+#endif
 
 			/* Set advertisement packet and begin advertising */
 			wiced_bt_ble_set_raw_advertisement_data(CY_BT_ADV_PACKET_DATA_SIZE, cy_bt_adv_packet_data);
@@ -113,13 +127,16 @@ wiced_result_t app_bt_management_callback( wiced_bt_management_evt_t event, wice
 			/* Disable pairing */
 			wiced_bt_set_pairable_mode( WICED_FALSE, WICED_FALSE );
 
+			//			wiced_bt_start_advertisements( BTM_BLE_ADVERT_UNDIRECTED_HIGH, 0, NULL );
+
 			result = WICED_BT_SUCCESS;
 		}
 		else
 		{
+#ifdef UNUSE_I2S
 			printf( "Failed to initialize Bluetooth controller and stack\n\r" );
+#endif
 		}
-		//		}
 		break;
 
 	case BTM_PAIRING_IO_CAPABILITIES_BLE_REQUEST_EVT: 		// IO capabilities request
@@ -162,18 +179,31 @@ wiced_result_t app_bt_management_callback( wiced_bt_management_evt_t event, wice
 		break;
 
 	case BTM_BLE_ADVERT_STATE_CHANGED_EVT:					// Advertising State Change
+#ifdef UNUSE_I2S
 		printf("Advertisement State Change: %s\n\r", get_bt_advert_mode_name(p_event_data->ble_advert_state_changed));
+#endif
+		event_data_ble = p_event_data->ble_advert_state_changed;
 		result = WICED_BT_SUCCESS;
-		if (p_event_data->ble_advert_state_changed == BTM_BLE_ADVERT_OFF){
-			if(connection_id == 0){
+		if ( event_data_ble == BTM_BLE_ADVERT_OFF)
+		{
+			if(connection_id == 0)
+			{
+				/*---> When Bluetooth is disconnect with phone LED turn off <---*/
 				cyhal_pwm_set_duty_cycle(&PWM_obj, 100, 2);
 			}
-			else { //connected
+			else
+			{ //connected
+				/*---> When device connected to phone LED will be active/turn on <---*/
 				cyhal_pwm_set_duty_cycle(&PWM_obj, 0, 2);
 			}
+#ifdef UNUSE_I2S
+			printf("Connection ID disconnect %d\n", connection_id);
+#endif
 		}
-		else{
-			cyhal_pwm_set_duty_cycle(&PWM_obj, 50, 2);
+		else
+		{
+			/*---> When device advertisement the LED will be blink fast <---*/
+			cyhal_pwm_set_duty_cycle(&PWM_obj, 90, 10);
 		}
 		break;
 
@@ -226,7 +256,9 @@ static wiced_bt_gatt_status_t app_bt_gatt_event_callback( wiced_bt_gatt_evt_t ev
 	break;
 
 	default:
+#ifdef UNUSE_I2S
 		printf( "Unhandled GATT Event: 0x%x (%d)\n\r", event, event );
+#endif
 		status = WICED_BT_GATT_SUCCESS;
 		break;
 	}
@@ -250,26 +282,27 @@ static wiced_bt_gatt_status_t app_bt_connect_event_handler(wiced_bt_gatt_connect
 	{
 		if (p_conn_status->connected)
 		{
+#ifdef UNUSE_I2S
 			printf("GATT_CONNECTION_STATUS_EVT: Connect BDA ");
 			print_bd_address(p_conn_status->bd_addr);
 			printf("Connection ID %d\n", p_conn_status->conn_id );
+#endif
 			connection_id = p_conn_status->conn_id;
 			/* Handle the connection */
 			//			flag_bt_actived = false;
 		}
 		else
 		{
+#ifdef UNUSE_I2S
 			printf("Disconnected : BDA " );
 			print_bd_address(p_conn_status->bd_addr);
-			printf("Connection ID '%d', Reason '%s'\n\r", p_conn_status->conn_id, get_bt_gatt_disconn_reason_name(p_conn_status->reason) );
+			reason_disconnect = get_bt_gatt_disconn_reason_name(p_conn_status->reason);
+			reason_dic = p_conn_status->reason;
+			printf("Connection ID '%d', Reason '%s' %d\n\r", p_conn_status->conn_id, reason_disconnect, reason_dic);
+#endif
+			cyhal_pwm_set_duty_cycle(&PWM_obj, 100, 2);
 			connection_id = 0;
 			set_rtc = false;
-
-			//			flag_bt_actived = true;
-			/* Handle the disconnection */
-
-			/* Restart the advertisements */
-			//			wiced_bt_start_advertisements( BTM_BLE_ADVERT_UNDIRECTED_HIGH, 0, NULL );
 		}
 
 		status = WICED_BT_GATT_SUCCESS;
@@ -345,7 +378,9 @@ static wiced_bt_gatt_status_t app_bt_server_event_handler(wiced_bt_gatt_event_da
 		break;
 
 	default:
+#ifdef UNUSE_I2S
 		printf( "Unhandled GATT Server Event: 0x%x (%d)\n\r", p_att_req->opcode, p_att_req->opcode );
+#endif
 		break;
 	}
 
@@ -442,14 +477,18 @@ static wiced_bt_gatt_status_t app_bt_write_handler(wiced_bt_gatt_event_data_t *p
 			{
 				/* Value to write will not fit within the table */
 				status = WICED_BT_GATT_INVALID_ATTR_LEN;
+#ifdef UNUSE_I2S
 				printf("Invalid attribute length during GATT write\n");
+#endif
 			}
 			break;
 		}
 	}
 	if (WICED_BT_GATT_SUCCESS != status)
 	{
+#ifdef UNUSE_I2S
 		printf("GATT write failed: %d\n", status);
+#endif
 	}
 
 	return status;
@@ -491,7 +530,9 @@ static wiced_bt_gatt_status_t app_bt_gatt_req_read_handler(uint16_t conn_id, wic
 	{
 	// Add action when specified handle is read
 	case HDLC_PSOC_LED_VALUE:
+#ifdef UNUSE_I2S
 		printf( "LED is %s\r\n", app_psoc_led[0] ? "ON" : "OFF" );
+#endif
 		break;
 	}
 
@@ -566,7 +607,9 @@ static wiced_bt_gatt_status_t app_bt_gatt_req_read_by_type_handler(uint16_t conn
 	{
 	// Add action when specified handle is read
 	case HDLC_PSOC_LED_VALUE:
+#ifdef UNUSE_I2S
 		printf( "LED is %s\r\n", app_psoc_led[0] ? "ON" : "OFF" );
+#endif
 		break;
 	}
 
@@ -634,7 +677,9 @@ static wiced_bt_gatt_status_t app_bt_gatt_req_read_multi_handler(uint16_t conn_i
 	{
 	// Add action when specified handle is read
 	case HDLC_PSOC_LED_VALUE:
+#ifdef UNUSE_I2S
 		printf( "LED is %s\r\n", app_psoc_led[0] ? "ON" : "OFF" );
+#endif
 		break;
 	}
 

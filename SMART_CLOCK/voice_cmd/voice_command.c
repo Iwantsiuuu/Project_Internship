@@ -22,13 +22,19 @@
 
 #include "voice_command.h"
 
+#ifdef USE_I2S
 static void i2s_isr_handler(void *arg, cyhal_i2s_event_t event);
+#endif
+
 static void asr_callback(const char *function, char *message, char *parameter);
 static void pdm_pcm_isr_handler(void *arg, cyhal_pdm_pcm_event_t event);
 
+#ifdef USE_I2S
 cyhal_i2s_t i2s;
+#endif
 
 cyhal_pdm_pcm_t pdm_pcm;
+
 cyhal_clock_t   audio_clock;
 cyhal_clock_t   pll_clock;
 
@@ -105,22 +111,27 @@ void init_pdm_pcm(void){
 
 void voice_command_task(void){
 
-//    cy_rslt_t result;
-//    uint64_t uid;
+#ifdef UNUSE_I2S
+	uint64_t uid;
+#endif
 
 	while(!systemReady){
 		vTaskDelay(5);
 	}
 
-//    uid = Cy_SysLib_GetUniqueId();
-//    printf("uniqueIdHi: 0x%08lX, uniqueIdLo: 0x%08lX\r\n", (uint32_t)(uid >> 32), (uint32_t)(uid << 32 >> 32));
+#ifdef UNUSE_I2S
+    uid = Cy_SysLib_GetUniqueId();
+    printf("uniqueIdHi: 0x%08lX, uniqueIdLo: 0x%08lX\r\n", (uint32_t)(uid >> 32), (uint32_t)(uid << 32 >> 32));
+#endif
 
     if(!cyberon_asr_init(asr_callback))
     {
     	while(1);
     }
 
-//    printf("\r\nAwaiting voice input trigger command (\"Hello Box/Hi box/Hey box\"):\r\n");
+#ifdef UNUSE_I2S
+    printf("\r\nAwaiting voice input trigger command (\"Hello Box/Hi box/Hey box\"):\r\n");
+#endif
 
 	while(true){
         if(pdm_pcm_flag)
@@ -155,6 +166,11 @@ void pdm_pcm_isr_handler(void *arg, cyhal_pdm_pcm_event_t event)
 
 static void asr_callback(const char *function, char *message, char *parameter)
 {
+
+#ifdef UNUSE_I2S
+	printf("[%s][%s] = %s\r\n", function, message, parameter);
+#endif
+
 	char* param = strstr(message, (const char*)"Map");
 	if(param != NULL)
 	{
@@ -175,6 +191,7 @@ static void asr_callback(const char *function, char *message, char *parameter)
 	}
 }
 
+#ifdef USE_I2S
 static void i2s_isr_handler(void *arg, cyhal_i2s_event_t event)
 {
 	(void) arg;
@@ -188,3 +205,4 @@ static void i2s_isr_handler(void *arg, cyhal_i2s_event_t event)
 	/* Turn off the led when data already transfer */
 	cyhal_gpio_write(CYBSP_USER_LED, CYBSP_LED_STATE_OFF);
 }
+#endif

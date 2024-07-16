@@ -38,7 +38,15 @@ void ButtonInit(){
 	}
 
 	for (uint8_t i = 0; i < NUM_OF_BTN; i++){
+
+#ifdef UNUSE_I2S
 		if( button.create(&btn_obj[i], btn_pin[i], BUTTON_LOW, 200) == CY_RSLT_SUCCESS )
 			printf(" button %i initialize success \r\n", i);
+#endif
+
+#ifdef USE_I2S
+		button.create(&btn_obj[i], btn_pin[i], BUTTON_LOW, 200);
+#endif
+
 	}
 }

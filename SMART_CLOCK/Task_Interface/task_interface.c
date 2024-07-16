@@ -104,7 +104,9 @@ u8g2_t u8g2_obj;
 
 void displayOled(){
 
-//	printf("Task Display\r\n");
+#ifdef UNUSE_I2S
+	printf("Task Display\r\n");
+#endif
 
 	u8g2_SetBitmapMode(&u8g2_obj, 0);
 	u8g2_DrawXBM(&u8g2_obj, 0, 0, infineon_logo_width, infineon_logo_height, infineon_logo_bits);
@@ -116,13 +118,25 @@ void displayOled(){
 		vTaskDelay(5);
 	}
 
-		RTC_ENABLE = cyhal_rtc_is_enabled(&rtc_obj);
-		if(RTC_ENABLE != ENABLE){
-			rtc_set_first();
-			wiced_bt_start_advertisements( BTM_BLE_ADVERT_UNDIRECTED_HIGH, 0, NULL );
-		}
+#ifdef UNUSE_I2S
+	printf("Ready\r\n");
+#endif
 
-		wiced_bt_start_advertisements( BTM_BLE_ADVERT_OFF, 0, NULL );
+	RTC_ENABLE = cyhal_rtc_is_enabled(&rtc_obj);
+	if(RTC_ENABLE != ENABLE){
+
+#ifdef UNUSE_I2S
+		printf("Set RTC First\r\n");
+#endif
+		wiced_bt_start_advertisements( BTM_BLE_ADVERT_UNDIRECTED_HIGH, 0, NULL );
+		rtc_set_first();
+	}
+
+#ifdef UNUSE_I2S
+	printf("Stop advtsm\r\n");
+#endif
+
+	wiced_bt_start_advertisements( BTM_BLE_ADVERT_OFF, 0, NULL );
 
 	while(1){
 

@@ -4,6 +4,6 @@
 .popsection
 
 .pushsection license_data, "ax", %progbits
-.incbin "data/EF2F17571896353D1718158130_License.bin"
+.incbin "data/F32F264A0E8B05EA1720686282_License.bin"
 #.incbin "data/F52F2A1F028CAFE41718160741_License.bin"
 .popsection

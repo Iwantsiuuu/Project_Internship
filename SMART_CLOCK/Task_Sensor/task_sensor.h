@@ -14,7 +14,9 @@
 
 typedef struct{
 	float temperature,
-		  pressure;
+		  pressure,
+		  humidity,
+		  gas;
 }sensor_data;
 
 extern sensor_data dps_sensor;

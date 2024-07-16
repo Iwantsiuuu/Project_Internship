@@ -92,11 +92,20 @@ INCLUDES=
 # Add additional defines to the build process (without a leading -D).
 DEFINES=
 
-# Uncomment your sensor used
-#DEFINES+=USE_BMxx80
-DEFINES+=USE_DPS3xx
-#DEFINES+=USE_I2S
+# Uncomment your peripheral and sensor used
 
+#DEFINES+=USE_BMP280
+#DEFINES+=USE_BME680
+#DEFINES+=USE_DPS310
+
+#DEFINES+=USE_I2S
+DEFINES+=UNUSE_I2S
+
+#DEFINES+=USE_SENSOR
+DEFINES+=USE_DUMMY_DATA
+
+#DEFINES+=USE_EXPANSION_BOARD
+DEFINES+=USE_SMART_CLOCK_DEVELOPMENT_BOARD
 
 # Select softfp or hardfp floating point. Default is softfp.
 VFP_SELECT=
